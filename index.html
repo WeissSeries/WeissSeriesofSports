@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2025 Sports Picks</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <h1 class="text-4xl font-bold mb-6 text-center">2025 College Football Picks</h1>
+
+  <!-- Picks Sections -->
+  <div class="max-w-4xl mx-auto space-y-6">
+    <div class="bg-white rounded-2xl shadow p-4">
+      <h2 class="text-2xl font-bold mb-2">Buck's Picks</h2>
+      <ul id="buck-picks" class="list-disc pl-6"></ul>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow p-4">
+      <h2 class="text-2xl font-bold mb-2">Bob Father's Picks</h2>
+      <ul id="bobfather-picks" class="list-disc pl-6"></ul>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow p-4">
+      <h2 class="text-2xl font-bold mb-2">Slick's Picks</h2>
+      <ul id="slick-picks" class="list-disc pl-6"></ul>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow p-4">
+      <h2 class="text-2xl font-bold mb-2">Mr. Met's Picks</h2>
+      <ul id="mrmet-picks" class="list-disc pl-6"></ul>
+    </div>
+  </div>
+
+  <!-- PapaParse CSV parser -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script>
+    async function loadPicks() {
+      const csvUrl = 'https://github.com/WeissSeries/WeissSeriesofSports/raw/refs/heads/main/Weiss%20Series%20of%20Sports%20Bet%20Tracker%202025.xlsx';
+
+      const response = await fetch(csvUrl);
+      const csvText = await response.text();
+
+      const data = Papa.parse(csvText, { header: true }).data;
+
+      const persons = ['Buck','BobFather','Slick','MrMet'];
+
+      persons.forEach(person => {
+        const ul = document.getElementById(person.toLowerCase() + '-picks');
+        if(!ul) return;
+        ul.innerHTML = '';
+
+        data.filter(row => row.Person === person).forEach(row => {
+          const li = document.createElement('li');
+          li.innerHTML = `${row.Week} – ${row.Team} (${row.Spread}) | ${row.Units} Units | <span class="${row.Result === 'W' ? 'text-green-600' : 'text-red-600'}">${row.Result}</span>`;
+          ul.appendChild(li);
+        });
+      });
+    }
+
+    loadPicks();
+  </script>
+</body>
+</html>
